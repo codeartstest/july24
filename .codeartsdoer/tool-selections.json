@@ -1,0 +1,13 @@
+{
+  "selectedAt": "2026-07-24T09:07:29Z",
+  "version": 2,
+  "methodologies": { "sdd": true, "tdd": true, "ddd": true },
+  "tools": {
+    "github": true, "jira": true, "sonarcloud": true,
+    "semgrep": false, "jfrog": false, "huawei-ecs": true,
+    "playwright": false, "sdd": true, "openspec": false,
+    "postman": true, "newman": true, "jest": false,
+    "pytest": true, "junit": false, "vitest": true,
+    "context-mapper": false, "eventstorming": true, "structurizr": false
+  }
+}
