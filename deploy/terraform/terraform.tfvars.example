@@ -1,0 +1,5 @@
+region          = "cn-north-4"
+instance_name   = "todo-list-server"
+flavor_id       = "s6.large.2"
+image_id        = "a0b1c2d3-e4f5-6789-abcd-ef0123456789"
+ssh_key_name    = "todo-deploy-key"
