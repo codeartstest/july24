@@ -1,0 +1,420 @@
+{
+  "info": {
+    "_postman_id": "todo-api-tests-001",
+    "name": "Todo API Tests",
+    "description": "Postman collection for Todo CRUD API — 10 test cases covering happy path and edge cases.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "api_prefix",
+      "value": "/api",
+      "type": "string"
+    },
+    {
+      "key": "todo_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Todos CRUD",
+      "item": [
+        {
+          "name": "1. Create Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Response has id as number', function () {",
+                  "    pm.expect(jsonData.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test('Response title matches', function () {",
+                  "    pm.expect(jsonData.title).to.eql('Test todo');",
+                  "});",
+                  "",
+                  "pm.test('Response completed is false', function () {",
+                  "    pm.expect(jsonData.completed).to.eql(false);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('todo_id', jsonData.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\": \"Test todo\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Todos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Response is array', function () {",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Array length >= 1', function () {",
+                  "    pm.expect(jsonData.length).to.be.at.least(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Single Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Response id matches todo_id', function () {",
+                  "    pm.expect(jsonData.id).to.eql(Number(pm.collectionVariables.get('todo_id')));",
+                  "});",
+                  "",
+                  "pm.test('Response title matches', function () {",
+                  "    pm.expect(jsonData.title).to.eql('Test todo');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos/{{todo_id}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Update Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Response title is updated', function () {",
+                  "    pm.expect(jsonData.title).to.eql('Updated todo');",
+                  "});",
+                  "",
+                  "pm.test('Response completed is true', function () {",
+                  "    pm.expect(jsonData.completed).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\": \"Updated todo\", \"completed\": true}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos/{{todo_id}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Delete Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "pm.test('Response body is empty', function () {",
+                  "    pm.expect(pm.response.text()).to.eql('');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos/{{todo_id}}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Get Deleted Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Detail is Todo not found', function () {",
+                  "    pm.expect(jsonData.detail).to.eql('Todo not found');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos/{{todo_id}}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Validation & Edge Cases",
+      "item": [
+        {
+          "name": "7. Create Todo - Empty Title",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 422', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\": \"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Create Todo - Missing Title",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 422', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9. Update Non-existent Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Detail is Todo not found', function () {",
+                  "    pm.expect(jsonData.detail).to.eql('Todo not found');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\": \"Non-existent\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos/99999"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10. Delete Non-existent Todo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "pm.test('Detail is Todo not found', function () {",
+                  "    pm.expect(jsonData.detail).to.eql('Todo not found');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{api_prefix}}/todos/99999"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
